@@ -1,4 +1,15 @@
-﻿using System;
+﻿/*///////////////////////////////////////////////
+ *  Created By Brandon Cook
+ *  Created On: 12/22/2020
+ *  Script Name: DEBUG_TEST_XML.cs
+ *  Description: Allow for the testing of the 
+ *  database storage on a local Server and or
+ *  computer for any errors in the XmlService
+ *  
+ *  ALL RIGHTS RESERVED
+ *///////////////////////////////////////////////
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -6,8 +17,8 @@ namespace TESCopper
 {
     class DEBUG_TEST_XML
     {
-        XmlService service = new XmlService();
-        enum TESTS
+        XmlService xmlDocumentService;
+        enum XML_TEST
         {
             SETUP = 0,
             Get_Open_Orders,
@@ -17,19 +28,28 @@ namespace TESCopper
             Remove_Open_Order,
             Remove_Close_Order,
             Move_Order_ToClose,
-            Move_Order_ToOpen,
-            GetXml
+            Move_Order_ToOpen
         }
 
         public DEBUG_TEST_XML()
         {
+            Console.WriteLine("Starting XMl Service.");
+            Console.WriteLine("\tChecking If Data File Exist");
+            if (!File.Exists(XmlService.DocumentFileName))
+            {
+                Console.WriteLine("\t\tDoes Not Exist. Starting Setup.");
+                Console.WriteLine("\t\t\tSetting Up...");
+                SetupNewXmlFile();
+            }
+            xmlDocumentService = new XmlService();
+
             Console.WriteLine("XML DEBUG");
             Console.WriteLine("Chose a Test");
 
             byte counter = 0;
             bool isRunning = true;
 
-            foreach (var option in Enum.GetValues(typeof(TESTS)))
+            foreach (var option in Enum.GetValues(typeof(XML_TEST)))
             {
                 Console.WriteLine("\t{1}:[{0}]", option, counter);
                 counter++;
@@ -53,7 +73,7 @@ namespace TESCopper
 
                         case 'h': // Help
                                counter = 0;
-                               foreach (var e in Enum.GetValues(typeof(TESTS)))
+                               foreach (var e in Enum.GetValues(typeof(XML_TEST)))
                                {
                                    Console.WriteLine("\t{1}:[{0}]", e, counter);
                                    counter++;
@@ -63,28 +83,18 @@ namespace TESCopper
                             break;
 
                         default: // Other Options
-                            TESTS testSection = TESTS.SETUP;
-                            bool checkSelString = Enum.TryParse<TESTS>(usrInpChar.ToString(), true, out testSection);
+                            XML_TEST testSection = XML_TEST.SETUP;
+                            bool checkSelString = Enum.TryParse<XML_TEST>(usrInpChar.ToString(), true, out testSection);
 
                             if (checkSelString)
                                 switch (testSection)
                                 {
-                                    case TESTS.SETUP:
+                                    case XML_TEST.SETUP:
                                         #region SETUP
 
                                         Console.WriteLine("Setting Up");
                                         if (!File.Exists(XmlService.DocumentFileName))
-                                        {
-                                            Console.WriteLine("\t Checking if Folder Exist..");
-                                            if (!Directory.Exists(XmlService.DocumentFolder))
-                                            {
-                                                Console.WriteLine("\t\t Creating Data Folder");
-                                                Directory.CreateDirectory(XmlService.DocumentFolder);
-                                            }
-                                            Console.WriteLine("\t Creating XML File");
-                                            XmlService.SetupNewXmlFile(XmlService.DocumentFileName);
-
-                                        }
+                                            SetupNewXmlFile();
                                         else
                                         {
                                             Console.WriteLine("\nWARNING THIS WILL DELETE ALL DATA IN THE FILE!!\n");
@@ -122,7 +132,7 @@ namespace TESCopper
 
                                         break;
                                     #endregion
-                                    case TESTS.Get_Open_Orders:
+                                    case XML_TEST.Get_Open_Orders:
                                         #region Get Open Orders
 
                                         Console.WriteLine("Getting Open Orders");
@@ -131,7 +141,7 @@ namespace TESCopper
                                         break;
 
                                     #endregion
-                                    case TESTS.Get_Closed_Orders:
+                                    case XML_TEST.Get_Closed_Orders:
                                         #region Get Closed Orders
 
                                         Console.WriteLine("Getting CLosed Orders");
@@ -140,7 +150,7 @@ namespace TESCopper
                                         break;
 
                                     #endregion
-                                    case TESTS.Add_Open_Order:
+                                    case XML_TEST.Add_Open_Order:
                                         #region ADD ORDER
 
                                         Console.WriteLine("Adding To Open Orders");
@@ -149,14 +159,14 @@ namespace TESCopper
                                         if (File.Exists(XmlService.DocumentFileName))
                                         {
                                             Console.WriteLine("\t Creating New Order. Please Input Data.");
-                                            service.AddOpenOrderDetails(PromptNewOrder());
-                                            service.SaveDocument();
+                                            xmlDocumentService.AddOpenOrderDetails(PromptNewOrder());
+                                            xmlDocumentService.SaveDocument();
                                         }
                                         else Console.WriteLine("Dataset Does not exist! Recommend running Setup! XML MENU OPTION 0");
                                         break;
 
                                     #endregion
-                                    case TESTS.Add_Close_Order:
+                                    case XML_TEST.Add_Close_Order:
                                         #region ADD Closed Orders
 
                                         Console.WriteLine("Adding To Closed Orders");
@@ -164,14 +174,14 @@ namespace TESCopper
                                         if (File.Exists(XmlService.DocumentFileName))
                                         {
                                             Console.WriteLine("\t Creating New Closed Order. Please Input Data.");
-                                            service.AddClosedOrderDetails(PromptNewOrder());
-                                            service.SaveDocument();
+                                            xmlDocumentService.AddClosedOrderDetails(PromptNewOrder());
+                                            xmlDocumentService.SaveDocument();
                                         }
                                         else Console.WriteLine("Dataset Does not exist! Recommend running Setup! XML MENU OPTION 0");
                                         break;
 
                                     #endregion
-                                    case TESTS.Remove_Open_Order:
+                                    case XML_TEST.Remove_Open_Order:
                                         #region Remove Open Order
                                         Console.WriteLine("Removing Open Order");
 
@@ -185,7 +195,7 @@ namespace TESCopper
 
                                             try
                                             {
-                                                service.RemoveOpenOrderDetails(ids[key]);
+                                                xmlDocumentService.RemoveOpenOrderDetails(ids[key]);
                                             }
                                             catch (Exception e)
                                             {
@@ -194,7 +204,7 @@ namespace TESCopper
                                         }
                                         break;
                                     #endregion
-                                    case TESTS.Remove_Close_Order:
+                                    case XML_TEST.Remove_Close_Order:
                                         #region Remove Closed Order
                                         Console.WriteLine("Removing Closed Order");
                                         if (File.Exists(XmlService.DocumentFileName))
@@ -207,7 +217,7 @@ namespace TESCopper
 
                                             try
                                             {
-                                                service.RemoveCloseOrderDetails(ids[key]);
+                                                xmlDocumentService.RemoveCloseOrderDetails(ids[key]);
                                             }
                                             catch (Exception e)
                                             {
@@ -217,7 +227,7 @@ namespace TESCopper
                                         break;
 
                                     #endregion
-                                    case TESTS.Move_Order_ToClose:
+                                    case XML_TEST.Move_Order_ToClose:
                                         #region MOVE ORDER TO CLOSED
                                         Console.WriteLine("Move a Open Order To Closed");
 
@@ -231,7 +241,7 @@ namespace TESCopper
 
                                             try
                                             {
-                                                service.MoveToClosed(ids[key]);
+                                                xmlDocumentService.MoveToClosed(ids[key]);
                                             }
                                             catch (Exception e)
                                             {
@@ -241,7 +251,7 @@ namespace TESCopper
                                         break;
 
                                     #endregion
-                                    case TESTS.Move_Order_ToOpen:
+                                    case XML_TEST.Move_Order_ToOpen:
                                         #region MOVE ORDER TO OPEN
                                         Console.WriteLine("Move a Closed Order to Open");
 
@@ -255,7 +265,7 @@ namespace TESCopper
 
                                             try
                                             {
-                                                service.MoveToOpen(ids[key]);
+                                                xmlDocumentService.MoveToOpen(ids[key]);
                                             }
                                             catch (Exception e)
                                             {
@@ -265,9 +275,7 @@ namespace TESCopper
 
                                         #endregion
                                         break;
-                                    case TESTS.GetXml:
-
-                                        break;
+                                    
                                 }
                             else throw new Exception("Could Not Find Test");
                             break;
@@ -282,11 +290,23 @@ namespace TESCopper
 
         }
 
+        private void SetupNewXmlFile()
+        {
+            Console.WriteLine("\t Checking if Folder Exist..");
+            if (!Directory.Exists(XmlService.DocumentFolder))
+            {
+                Console.WriteLine("\t\t Creating Data Folder");
+                Directory.CreateDirectory(XmlService.DocumentFolder);
+            }
+            Console.WriteLine("\t Creating XML File");
+            XmlService.SetupNewXmlFile(XmlService.DocumentFileName);
+            Console.WriteLine("\t\t\tCompleted");
+        }
         private void PrintOpenOrders()
         {
 
             Console.WriteLine("\t Building List..");
-            List<OrderData> orderData = new List<OrderData>(service.GetOpenOrderDetails());
+            List<OrderData> orderData = new List<OrderData>(xmlDocumentService.GetOpenOrderDetails());
             foreach (var bit in orderData)
                 Console.WriteLine(bit.ToString());
 
@@ -294,14 +314,14 @@ namespace TESCopper
         private void PrintClosedOrders()
         {
             Console.WriteLine("\t Building List..");
-            List<OrderData> orderData = new List<OrderData>(service.GetClosedOrderDetails());
+            List<OrderData> orderData = new List<OrderData>(xmlDocumentService.GetClosedOrderDetails());
             foreach (var bit in orderData)
                 Console.WriteLine(bit.ToString());
         }
 
         private Dictionary<string, string> PrintOpenOrders(bool retIds)
         {
-            List<OrderData> orderData = new List<OrderData>(service.GetOpenOrderDetails());
+            List<OrderData> orderData = new List<OrderData>(xmlDocumentService.GetOpenOrderDetails());
             if (retIds)
             {
                 Dictionary<string, string> ids = new Dictionary<string, string>();
@@ -323,7 +343,7 @@ namespace TESCopper
         }
         private Dictionary<string, string> PrintClosedOrders(bool retIds)
         {
-            List<OrderData> orderData = new List<OrderData>(service.GetClosedOrderDetails());
+            List<OrderData> orderData = new List<OrderData>(xmlDocumentService.GetClosedOrderDetails());
             if (retIds)
             {
                 Dictionary<string, string> ids = new Dictionary<string, string>();

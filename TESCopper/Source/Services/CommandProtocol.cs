@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TESCopper.Source.Services
+namespace TESCopper
 {
-    class FTPService
+    class CommandProtocol
     {
-
     }
 }
