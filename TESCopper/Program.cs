@@ -10,6 +10,7 @@ namespace TESCopper
             Console.WriteLine("Welcome To TESCopper");
             Console.WriteLine("What Would you like to do?");
             Console.WriteLine("1: XML");
+            Console.WriteLine("s: Server Client");
             Console.WriteLine("q: Quit");
 
             while(isRunning)
@@ -31,6 +32,10 @@ namespace TESCopper
                         case ConsoleKey.Q:
                             isRunning = false;
                             Console.WriteLine("Quitting");
+                            break;
+                        case ConsoleKey.S:
+                            Console.WriteLine("Starting Server Client Test");
+                            new DEBUG_TEST_SERVER_CLIENT();
                             break;
                         default:
                             throw new Exception("Invalid Key");

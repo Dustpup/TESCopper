@@ -39,7 +39,7 @@ namespace TESCopper
         {
             get => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "dataset.xml");
         }
-        public static string DocumentFolder
+        public static string DocumentFolder 
         {
             get => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
         }
