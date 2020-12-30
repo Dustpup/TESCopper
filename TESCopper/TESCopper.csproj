@@ -12,4 +12,8 @@
     <PackageReference Include="Terminal.Gui" Version="1.0.0-pre.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+
 </Project>
