@@ -125,7 +125,9 @@ namespace TESCopper
 
         }
         private void ReadCallback(IAsyncResult ar)
-        { }
+        { 
+        
+        }
 
     }
 
