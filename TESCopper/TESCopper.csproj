@@ -8,12 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySqlConnector" Version="1.1.0" />
-    <PackageReference Include="Terminal.Gui" Version="1.0.0-pre.5" />
+    <Compile Remove="Data\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <None Remove="Data\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
+    <PackageReference Include="MySqlConnector" Version="1.1.0" />
+    <PackageReference Include="Terminal.Gui" Version="1.0.0-pre.5" />
   </ItemGroup>
 
 </Project>
