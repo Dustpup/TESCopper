@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 namespace TESCopper
 {
-    class SocketCommandService
+    public class SocketCommandService
     {
         const int MAX_BUFFERSIZE = 1024;
         const int MAX_BACKLOG = 100;
@@ -17,7 +17,7 @@ namespace TESCopper
         private bool isListening = false;
         private ManualResetEvent waitForNewClient = new ManualResetEvent(false);
 
-        public IPHostEntry GetLocalHost    { get => Dns.GetHostEntry("LocalHost"); }
+        public IPHostEntry GetLocalHost    { get => Dns.GetHostEntry("localhost"); }
         public IPAddress GetIpLocalAddress { get => GetLocalHost.AddressList[0]; }
         public IPEndPoint GetLocalEndPoint { get => localIpEndPoint; private set => localIpEndPoint = value; }
 
@@ -30,13 +30,14 @@ namespace TESCopper
                 {
                     byte[] buffer = new byte[MAX_BUFFERSIZE];
                     Socket listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    
-                    StartListening(ref listener);
+                    GetLocalEndPoint = new IPEndPoint(new IPAddress(new byte[] { 127,0,0,1}), MAIN_PORT);
+
+                    StartListening(listener);
                 }
                 );
         }
 
-        private void StartListening(ref Socket listener)
+        private void StartListening(Socket listener)
         {
             isListening = true;
 
@@ -53,14 +54,14 @@ namespace TESCopper
                 }
             }
             catch (Exception e) { Console.WriteLine(e.Message); }
-            finally { StopListening(ref listener); }
+            finally { StopListening(listener); }
         }
-        private void StartReceiving(ref ClientState clientState, ref Socket clientHandler)
+        private void StartReceiving(ClientState clientState, Socket clientHandler)
         {
             clientHandler.BeginReceive(clientState.Buffer, 0, MAX_BUFFERSIZE, 0,
                     new AsyncCallback(ReaderCallBack), clientState);
         }
-        private void StopListening(ref Socket listener)
+        private void StopListening(Socket listener)
         {
             listener.Disconnect(true);
             waitForNewClient.Close();
@@ -84,7 +85,7 @@ namespace TESCopper
 
             clientState.WorkerSocket = clientHandler;
 
-            StartReceiving(ref clientState, ref clientHandler);
+            StartReceiving(clientState, clientHandler);
         }
         private void ReaderCallBack(IAsyncResult callBResult)
         {
@@ -107,7 +108,7 @@ namespace TESCopper
 
 
                 }
-                else StartReceiving(ref clientState, ref clientHandler);
+                else StartReceiving(clientState, clientHandler);
             }
 
         }

@@ -11,5 +11,12 @@ namespace TESCopper
         public Socket WorkerSocket { get; set; }
         public byte[] Buffer { get; set; }
         public StringBuilder recieverString { get; set; }
+
+        public ClientState()
+        {
+            Buffer = new byte[MAX_BUFFER_SIZE];
+            recieverString = new StringBuilder();
+            WorkerSocket = null;
+        }
     }
 }

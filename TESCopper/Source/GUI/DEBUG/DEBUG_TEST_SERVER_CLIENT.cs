@@ -54,11 +54,13 @@ namespace TESCopper
                                 switch (testSelection)
                                 {
                                     case TESTS.CLIENT:
-                                        Console.WriteLine("\t\t Starting Communications Client..");
-                                        COMClient client = new COMClient();
+                                        Console.WriteLine("\t\t Starting Communications Client.. \n");
+                                        SocketClientService client = new SocketClientService();
+                                        client.StartClient();
                                         break;
                                     case TESTS.SERVER:
-                                        COMServer server = new COMServer();
+                                        SocketCommandService service = new SocketCommandService();
+                                        service.StartServer();
                                         break;
                                 }
                             else throw new Exception("Could Not Find Test");
