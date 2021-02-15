@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TESCopper.Source.Services.SERVER
+namespace TESCopper
 {
 
     class ServerCommand
@@ -24,13 +24,14 @@ namespace TESCopper.Source.Services.SERVER
 
         public IPEndPoint GetLocalEndPoint 
         {
+
             get => socketEndPoint;
             private set
             {
                 socketEndPoint = value;
                 try
                 {
-                    OnNewEndPoint.Invoke(this, null);
+                    //OnNewEndPoint.Invoke(this, null);
                 }
                 catch (NullReferenceException)
                 {
@@ -58,6 +59,7 @@ namespace TESCopper.Source.Services.SERVER
 
         private void StartListening(Socket listener)
         {
+            OnStartedListening += ServerCommand_OnStartedListening;
             OnStartedListening.Invoke(this, null);
 
             try
@@ -82,18 +84,97 @@ namespace TESCopper.Source.Services.SERVER
                 StopListening(listener); 
             }
         }
+
+        private void ServerCommand_OnStartedListening(object sender, EventArgs e)
+        {
+            isListening = true;
+        }
+
         private void StopListening(Socket listener)
         {
             listener.Disconnect(true);
             waitForAClient.Close();
             Console.WriteLine("Session Closed");
-            OnStoppedListening.Invoke(this, null);
+            //OnStoppedListening.Invoke(this, null);
         }
+
         private void AcceptClientCallBack(IAsyncResult callBackResult)
         {
             waitForAClient.Set();
 
+            Socket listener = (Socket)callBackResult.AsyncState;
+            Socket handler = listener.EndAccept(callBackResult);
 
+            ClientState state = new ClientState();
+            state.WorkerSocket = handler;
+            handler.BeginReceive(state.Buffer, 0, ClientState.MAX_BUFFER_SIZE, 0,
+                new AsyncCallback(ReadCallBack), state);
+
+        }
+
+        private void ReadCallBack(IAsyncResult callBackResult)
+        {
+            string content = String.Empty;
+
+            ClientState state = (ClientState)callBackResult.AsyncState;
+            Socket handler = state.WorkerSocket;
+
+            int bytesRead = handler.EndReceive(callBackResult);
+
+            if(bytesRead > 0)
+            {
+                state.recieverString.Append(Encoding.ASCII.GetString(state.Buffer, 0, bytesRead));
+
+                content = state.recieverString.ToString();
+
+                if(content.IndexOf("<EOF>") > -1)
+                {
+                    Console.WriteLine("Read {0} bytes from socket. \n Data {1}",
+                        content.Length, content);
+
+                    state.recieverString.Clear();
+
+                    if (state.WorkerSocket.Connected)
+                    {
+                        handler.BeginReceive(state.Buffer, 0, ClientState.MAX_BUFFER_SIZE, 0,
+                            new AsyncCallback(ReadCallBack), state);
+                    }
+
+                    
+                    // Attach Return Commands Here. 
+                }
+                else
+                {
+                    handler.BeginReceive(state.Buffer, 0, ClientState.MAX_BUFFER_SIZE, 0,
+                        new AsyncCallback(ReadCallBack),state);
+                }
+            }
+        }
+
+        private void Send(Socket handle, string data)
+        {
+            byte[] byteData = Encoding.ASCII.GetBytes(data);
+                handle.BeginSend(byteData, 0, byteData.Length, 0,
+                    new AsyncCallback(SendCallback), handle);
+            
+        }
+
+        private void SendCallback(IAsyncResult callBackResult)
+        {
+            try
+            {
+                Socket handler = (Socket)callBackResult.AsyncState;
+
+                int bytesToSend = handler.EndSend(callBackResult);
+                Console.WriteLine("Sent {0} bytes to client.", bytesToSend);
+
+                handler.Shutdown(SocketShutdown.Both);
+                handler.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
     }
 }

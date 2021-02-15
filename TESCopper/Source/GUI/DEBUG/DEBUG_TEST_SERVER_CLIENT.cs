@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TESCopper
 {
-    class DEBUG_TEST_SERVER_CLIENT
+    class  DEBUG_TEST_SERVER_CLIENT
     {
         enum TESTS
         {
@@ -55,12 +55,11 @@ namespace TESCopper
                                 {
                                     case TESTS.CLIENT:
                                         Console.WriteLine("\t\t Starting Communications Client.. \n");
-                                        SocketClientService client = new SocketClientService();
-                                        client.StartClient();
+                                        AsynchronousClient.StartClient();
                                         break;
                                     case TESTS.SERVER:
-                                        SocketCommandService service = new SocketCommandService();
-                                        service.StartServer();
+                                        ServerCommand service = new ServerCommand();
+                                        service.StartServer(System.Net.IPAddress.Loopback, 60601);
                                         break;
                                 }
                             else throw new Exception("Could Not Find Test");
