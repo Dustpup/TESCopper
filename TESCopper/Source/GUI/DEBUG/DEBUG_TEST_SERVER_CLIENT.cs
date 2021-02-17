@@ -58,7 +58,7 @@ namespace TESCopper
                                         AsynchronousClient.StartClient();
                                         break;
                                     case TESTS.SERVER:
-                                        ServerCommand service = new ServerCommand();
+                                        Server service = new Server();
                                         service.StartServer(System.Net.IPAddress.Loopback, 60601);
                                         break;
                                 }
