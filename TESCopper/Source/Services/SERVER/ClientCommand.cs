@@ -63,7 +63,7 @@ namespace TESCopper
                 {
                     // Send test data to the remote device.  
                     i++;
-                    Send(client, String.Format("This is a test<EOF>{0}",i));
+                    Send(client, String.Format("stop:..:"));
                     Thread.Sleep(2000);
                 }
                 // Write the response to the console.  
