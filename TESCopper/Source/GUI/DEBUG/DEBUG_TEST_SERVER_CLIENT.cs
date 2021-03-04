@@ -58,8 +58,7 @@ namespace TESCopper
                                         AsynchronousClient.StartClient();
                                         break;
                                     case TESTS.SERVER:
-                                        Server service = new Server();
-                                        service.StartServer(System.Net.IPAddress.Loopback, 60601);
+                                        Server.StartServer(System.Net.IPAddress.Loopback, 60601);
                                         break;
                                 }
                             else throw new Exception("Could Not Find Test");

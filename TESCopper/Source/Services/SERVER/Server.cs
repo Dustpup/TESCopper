@@ -20,6 +20,7 @@ namespace TESCopper
         private static bool isListening = false;
         private static EndPoint localEndPoint;
 
+        // To initialize events in this code Use InitEvents()
         public static event ListenHandler OnServerStopped;
         public static event ListenHandler OnStartListening;
         public static event RequestHandler OnClientRequest;
@@ -211,7 +212,7 @@ namespace TESCopper
                     Console.WriteLine("Client Closed Connection Prematurely");
                     break;
                 case SocketError.TimedOut:
-                    Console.WriteLine("Client Had");
+                    Console.WriteLine("Client Haded Timed Out");
                     break;
                 default:
                     Console.WriteLine("{1}:{2} Socket Error has Occured. Error Code {0}", error.ErrorCode, remoteEndP.Address.ToString(), localEndP.Port);
