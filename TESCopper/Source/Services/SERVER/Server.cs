@@ -52,6 +52,7 @@ namespace TESCopper
                 }
                 );
         }
+
         /// <summary>
         /// Forces the server to stop the loop
         /// </summary>
@@ -219,7 +220,7 @@ namespace TESCopper
                     break;
             }
         }
-
+        
         private static void InitEvents()
         {
             OnStartListening += StartListening;
