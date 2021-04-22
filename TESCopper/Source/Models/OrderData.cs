@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using MySqlConnector;
+//using MySqlConnector;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;

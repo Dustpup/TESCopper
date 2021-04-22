@@ -76,6 +76,7 @@ namespace TESCopper.Source.Services.SERVER
         }
         private static void ReceiveCallBack(IAsyncResult result)
         {
+            string responce = null;
             try
             {
                 State state = (State)result.AsyncState;
@@ -92,12 +93,13 @@ namespace TESCopper.Source.Services.SERVER
                 }
                 else
                 {
-                    
+                    if (state.recieverString.Length > 1)
+                        responce = state.recieverString;
                 }
             }
             catch
             {
-                
+                // Put Error Code Here
             }
         }
 
