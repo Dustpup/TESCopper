@@ -11,14 +11,10 @@ namespace TESCopper
         public DEBUG_TEST_SSH()
         {
             Console.WriteLine("Testing SSH...");
-            service.Init(ASCIIEncoding.ASCII.GetBytes("TEST"),
-                "TEST","123.456.123.132");
+            service.Init(ASCIIEncoding.ASCII.GetBytes("..."),
+                "...","000.000.000.000");
 
-            service.AddMultiAddress(new string[] {
-                "123.123.123.123",
-                "147.147.147.147",
-                "159.159.159.159" },
-                new string[] { "BANNED", "HACKER"});
+            
         }
     }
-}
+} 
