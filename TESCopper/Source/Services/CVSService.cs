@@ -1,21 +1,25 @@
 ﻿using System;
-using System.IO
+using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TESCopper.Source.Services
+namespace TESCopper
 {
     class CVSService
     {
-        public CVSService(string fileName)
+        public static List<string> GetIps(string fileName)
         {
-            if(File.Exists(fileName))
-            {
-                FileStream file =  File.OpenRead(fileName);
-                StreamReader reader = new StreamReader(file);
+            List<string> IPS = new List<string>();
+            StreamReader reader;
+            if (File.Exists(fileName))
+                using (reader = new StreamReader(fileName))
+                {
+                    while(!reader.EndOfStream)
+                    IPS.Add(reader.ReadLine().Split(',')[0]);
+                }
 
-                reader.ReadToEnd();
-            }
+            return IPS;
         }
     }
 }

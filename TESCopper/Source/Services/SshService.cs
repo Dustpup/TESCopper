@@ -23,12 +23,12 @@ namespace TESCopper
 
         public void AddAddress(string address,params string[] Tags)
         {
-            using (SshClient client = new SshClient(connectionInfo))
+            using (SshClient SSHCLIENT = new SshClient(connectionInfo))
             {
-                client.Connect();
-                Run_AddAddress(client,address, Tags);
-                Commit(client);
-                client.Disconnect();
+                SSHCLIENT.Connect();
+                Run_AddAddress(SSHCLIENT,address, Tags);
+                Commit(SSHCLIENT);
+                SSHCLIENT.Disconnect();
             }
         }
         public void AddMultiAddress(string[] addresses,params string[] Tags)
@@ -40,7 +40,7 @@ namespace TESCopper
 
                 foreach (string s in addresses)
                 {
-                    Thread.Sleep(TimeSpan.FromSeconds(0.3));
+                    Thread.Sleep(TimeSpan.FromSeconds(0.1));
                     Run_AddAddress(client, s, Tags);
                 }
 
@@ -55,7 +55,7 @@ namespace TESCopper
 
         private void Run_AddAddress(SshClient client,string address, string[] Tags)
         {
-            client.RunCommand(String.Format("{0} {1} {2} [{3}] ",
+           Console.WriteLine(String.Format("{0} {1} {2} [{3}] ",
                 ADD_ADDRESS,
                 address,
                 TAG,

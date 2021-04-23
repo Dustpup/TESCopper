@@ -13,7 +13,10 @@ namespace TESCopper
             Console.WriteLine("Testing SSH...");
             service.Init(ASCIIEncoding.ASCII.GetBytes("..."),
                 "...","000.000.000.000");
-
+            service.AddMultiAddress(
+                CVSService.GetIps("C:\\Users\\Desktop3245\\Downloads\\google.csv").ToArray(),
+                new string[] { "BANNED", "HACKER" });
+            
             
         }
     }
